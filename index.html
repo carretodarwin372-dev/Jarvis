@@ -87,6 +87,63 @@ voz.pitch=1;
 
 speechSynthesis.speak(voz);
 }
+function comando(texto){
+  const pregunta=texto.toLowerCase();
+
+  if(pregunta.includes("youtube")){
+    hablar("Abriendo YouTube, señor.");
+    setTimeout(function(){
+      window.open("https://www.youtube.com","_blank");
+    },500);
+    return;
+  }
+
+  if(pregunta.includes("google")){
+    hablar("Abriendo Google, señor.");
+    setTimeout(function(){
+      window.open("https://www.google.com","_blank");
+    },500);
+    return;
+  }
+
+  if(pregunta.includes("hora")){
+    const hora=new Date().toLocaleTimeString("es-GT",
+    {hour:"2-digit",minute:"2-digit"});
+    hablar("Son las "+hora);
+    return;
+  }
+
+  if(pregunta.includes("día")||pregunta.includes("fecha")){
+    const fecha=new Date().toLocaleDateString("es-GT",
+    {weekday:"long",day:"numeric",month:"long",year:"numeric"});
+    hablar("Hoy es "+fecha);
+    return;
+  }
+
+  if(pregunta.includes("quién eres")||pregunta.includes("quien eres")){
+    hablar("Soy JARVIS Mark 6, su asistente personal. Estoy a su servicio, señor.");
+    return;
+  }
+
+  if(pregunta.includes("hola")){
+    hablar("Hola, señor. ¿En qué puedo ayudarle?");
+    return;
+  }
+
+  hablar("Entendido. Todavía estoy aprendiendo ese comando.");
+    }
+  const respuesta=document.getElementById("respuesta");
+
+function hablar(texto){
+  // TU código real de voz
+}
+
+function comando(texto){
+  // TU código real de comandos
+}
+
+const Reconocimiento=
+window.SpeechRecognition||window.webkitSpeechRecognition;
 
 function comando(texto){
 const pregunta=texto.toLowerCase();
