@@ -50,7 +50,6 @@ button{width:100%;padding:15px;margin:7px 0;border:0;border-radius:12px;backgrou
 <div class="etiqueta">📶 RED</div>
 <div class="valor" id="red">--</div>
 </div>
-
 <div class="cuadro">
 <div class="etiqueta">🔋 ENERGÍA</div>
 <div class="valor" id="bateria">--</div>
@@ -132,10 +131,10 @@ function comando(texto)
   }
 
   hablar("Entendido. Todavía estoy aprendiendo ese comando.");
-    }
-
-const Reconocimiento=
+}
+  const Reconocimiento=
 window.SpeechRecognition||window.webkitSpeechRecognition;
+  
 
 function comando(texto){
 const pregunta=texto.toLowerCase();
