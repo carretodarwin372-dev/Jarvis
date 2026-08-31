@@ -1,1 +1,172 @@
 
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>JARVIS Mark 6</title>
+<style>
+body{margin:0;background:#071018;color:#dff8ff;font-family:Arial;text-align:center}
+.app{max-width:500px;margin:auto;padding:25px 18px}
+h1{letter-spacing:5px}
+.sub{color:#75b8c9;margin-bottom:25px}
+.card{background:#0c1b23;border:1px solid #245465;border-radius:18px;padding:20px;margin:15px 0}
+.orb{width:110px;height:110px;margin:10px auto 20px;border:2px solid #42d7ff;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:45px}
+#respuesta{min-height:55px;font-size:18px;line-height:1.4}
+button{width:100%;padding:15px;margin:7px 0;border:0;border-radius:12px;background:#123b4a;color:white;font-size:16px;font-weight:bold}
+.principal{background:#14758f}
+.estado{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.cuadro{background:#102832;padding:12px;border-radius:10px}
+.etiqueta{font-size:11px;color:#77aebb}
+.valor{font-weight:bold;margin-top:5px}
+</style>
+</head>
+<body>
+
+<div class="app">
+<h1>JARVIS</h1>
+<div class="sub">MARK 6 · ASISTENTE PERSONAL</div>
+
+<div class="card">
+<div class="orb">🤖</div>
+<div id="respuesta">A su servicio, señor.</div>
+
+<button class="principal" onclick="escuchar()">
+🎙️ HABLAR CON JARVIS
+</button>
+
+<button onclick="detener()">
+⏹️ DETENER VOZ
+</button>
+</div>
+
+<div class="card estado">
+<div class="cuadro">
+<div class="etiqueta">🧠 IA NÚCLEO</div>
+<div class="valor">ACTIVA</div>
+</div>
+
+<div class="cuadro">
+<div class="etiqueta">📶 RED</div>
+<div class="valor" id="red">--</div>
+</div>
+
+<div class="cuadro">
+<div class="etiqueta">🔋 ENERGÍA</div>
+<div class="valor" id="bateria">--</div>
+</div>
+
+<div class="cuadro">
+<div class="etiqueta">🎙️ VOZ</div>
+<div class="valor">LISTA</div>
+</div>
+</div>
+
+<div class="card">
+<button onclick="comando('hola')">👋 Hola JARVIS</button>
+<button onclick="comando('qué hora es')">🕐 ¿Qué hora es?</button>
+<button onclick="comando('qué día es hoy')">📅 ¿Qué día es hoy?</button>
+<button onclick="comando('quién eres')">🤖 ¿Quién eres?</button>
+</div>
+</div>
+
+<script>
+const respuesta=document.getElementById("respuesta");
+
+function hablar(texto){
+respuesta.textContent=texto;
+
+if(!("speechSynthesis" in window))return;
+
+speechSynthesis.cancel();
+
+const voz=new SpeechSynthesisUtterance(texto);
+voz.lang="es-ES";
+voz.rate=0.95;
+voz.pitch=1;
+
+speechSynthesis.speak(voz);
+}
+
+function comando(texto){
+const pregunta=texto.toLowerCase();
+
+if(pregunta.includes("hora")){
+const hora=new Date().toLocaleTimeString("es-GT",
+{hour:"2-digit",minute:"2-digit"});
+hablar("Son las "+hora);
+return;
+}
+
+if(pregunta.includes("día")||pregunta.includes("fecha")){
+const fecha=new Date().toLocaleDateString("es-GT",
+{weekday:"long",day:"numeric",month:"long",year:"numeric"});
+hablar("Hoy es "+fecha);
+return;
+}
+
+if(pregunta.includes("quién eres")||pregunta.includes("quien eres")){
+hablar("Soy JARVIS Mark 6, su asistente personal. Estoy a su servicio, señor.");
+return;
+}
+
+if(pregunta.includes("hola")){
+hablar("Hola, señor. ¿En qué puedo ayudarle?");
+return;
+}
+
+hablar("Entendido. Todavía estoy aprendiendo ese comando.");
+}
+
+const Reconocimiento=
+window.SpeechRecognition||window.webkitSpeechRecognition;
+
+function escuchar(){
+
+if(!Reconocimiento){
+hablar("El reconocimiento de voz no está disponible. Abra JARVIS con Chrome.");
+return;
+}
+
+const reconocimiento=new Reconocimiento();
+
+reconocimiento.lang="es-GT";
+reconocimiento.interimResults=false;
+
+reconocimiento.onstart=function(){
+respuesta.textContent="Escuchando, señor...";
+};
+
+reconocimiento.onresult=function(event){
+const texto=event.results[0][0].transcript;
+comando(texto);
+};
+
+reconocimiento.onerror=function(){
+hablar("Necesito permiso para usar el micrófono.");
+};
+
+reconocimiento.start();
+}
+
+function detener(){
+speechSynthesis.cancel();
+}
+
+document.getElementById("red").textContent=
+navigator.onLine?"CONECTADA":"SIN CONEXIÓN";
+
+if(navigator.getBattery){
+navigator.getBattery().then(function(bateria){
+function actualizar(){
+document.getElementById("bateria").textContent=
+Math.round(bateria.level*100)+"%";
+}
+actualizar();
+bateria.addEventListener("levelchange",actualizar);
+});
+}
+</script>
+
+</body>
+</html>
