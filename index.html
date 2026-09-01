@@ -262,7 +262,157 @@ function comando(texto){
 
     return;
   }
+  // ===== COMANDOS ÚTILES JARVIS MARK 6 =====
 
+  // Buscar cualquier cosa en Google
+  if(
+    pregunta.includes("busca ") ||
+    pregunta.includes("buscar ")
+  ){
+
+    let busqueda = pregunta
+      .replace("busca ", "")
+      .replace("buscar ", "")
+      .trim();
+
+    if(busqueda){
+
+      hablar("Buscando " + busqueda + ", señor.");
+
+      setTimeout(function(){
+
+        window.open(
+          "https://www.google.com/search?q=" +
+          encodeURIComponent(busqueda),
+          "_blank"
+        );
+
+      },500);
+
+    }else{
+
+      hablar("¿Qué desea que busque, señor?");
+
+    }
+
+    return;
+  }
+
+
+  // Abrir Google Maps
+  if(
+    pregunta.includes("abre maps") ||
+    pregunta.includes("abre google maps") ||
+    pregunta.includes("mapas")
+  ){
+
+    hablar("Abriendo Google Maps, señor.");
+
+    setTimeout(function(){
+
+      window.open(
+        "https://maps.google.com",
+        "_blank"
+      );
+
+    },500);
+
+    return;
+  }
+
+
+  // Abrir WhatsApp
+  if(
+    pregunta.includes("abre whatsapp") ||
+    pregunta.includes("abrir whatsapp") ||
+    pregunta.includes("whatsapp")
+  ){
+
+    hablar("Abriendo WhatsApp, señor.");
+
+    setTimeout(function(){
+
+      window.open(
+        "https://web.whatsapp.com",
+        "_blank"
+      );
+
+    },500);
+
+    return;
+  }
+
+
+  // Abrir ChatGPT
+  if(
+    pregunta.includes("abre chatgpt") ||
+    pregunta.includes("abrir chatgpt")
+  ){
+
+    hablar("Abriendo ChatGPT, señor.");
+
+    setTimeout(function(){
+
+      window.open(
+        "https://chatgpt.com",
+        "_blank"
+      );
+
+    },500);
+
+    return;
+  }
+
+
+  // Abrir Facebook
+  if(
+    pregunta.includes("abre facebook") ||
+    pregunta.includes("abrir facebook")
+  ){
+
+    hablar("Abriendo Facebook, señor.");
+
+    setTimeout(function(){
+
+      window.open(
+        "https://www.facebook.com",
+        "_blank"
+      );
+
+    },500);
+
+    return;
+  }
+
+
+  // Estado de JARVIS
+  if(
+    pregunta.includes("estado del sistema") ||
+    pregunta.includes("estado de jarvis") ||
+    pregunta.includes("cómo está el sistema") ||
+    pregunta.includes("como esta el sistema")
+  ){
+
+    hablar(
+      "Todos los sistemas de JARVIS Mark 6 están funcionando correctamente, señor."
+    );
+
+    return;
+  }
+
+
+  // Presentación de JARVIS
+  if(
+    pregunta.includes("qué puedes hacer") ||
+    pregunta.includes("que puedes hacer")
+  ){
+
+    hablar(
+      "Puedo abrir aplicaciones y sitios web, buscar información, decirle la hora y la fecha, y ejecutar los comandos que estamos agregando a mi sistema, señor."
+    );
+
+    return;
+        }
 
   if(
     pregunta.includes("quién eres") ||
