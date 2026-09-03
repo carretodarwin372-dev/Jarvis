@@ -1,13 +1,20 @@
 {
-  "background_color": "#ffffff",
-  "dir": "ltr",
-  "display": "standalone",
   "name": "JARVIS Mark 6",
-  "orientation": "any",
-  "scope": "/",
   "short_name": "JARVIS",
-  "start_url": "/",
-  "theme_color": "#ffffff",
   "id": "/jarvis-mark-6",
-  "description": "JARVIS Mark 6, mi asistente personal para Android."
+  "description": "JARVIS Mark 6, mi asistente personal para Android.",
+  "start_url": "/",
+  "scope": "/",
+  "display": "standalone",
+  "orientation": "any",
+  "background_color": "#000000",
+  "theme_color": "#00BFFF",
+  "icons": [
+    {
+      "src": "icon-512.jpg",
+      "sizes": "500x500",
+      "type": "image/jpeg",
+      "purpose": "any maskable"
+    }
+  ]
 }
