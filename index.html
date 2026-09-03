@@ -193,8 +193,8 @@ function hablar(texto){
   const voz=new SpeechSynthesisUtterance(texto);
 
 voz.lang="es-MX";
-alert(speechSynthesis.getVoices().map(v => v.name + " | " + v.lang).join("\n"));
 const voces=speechSynthesis.getVoices();
+speechSynthesis.onvoiceschanged = () => alert(speechSynthesis.getVoices().map(v => v.name + " | " + v.lang).join("\n"));
 voz.rate=0.88;
 voz.pitch=0.72;
   speechSynthesis.speak(voz);
