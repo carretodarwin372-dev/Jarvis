@@ -10,10 +10,11 @@
   "background_color": "#000000",
   "theme_color": "#00BFFF",
   "icons": [
-    {
-      "src": "icon-512.jpg",
-      "sizes": "500x500",
-      "type": "image/jpeg",
+    { 
+
+"src": "jarvis-logo.png",
+"sizes": "512x512",
+"type": "image/png",
       "purpose": "any maskable"
     }
   ]
