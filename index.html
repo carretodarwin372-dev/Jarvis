@@ -183,6 +183,17 @@ function hablar(texto){
 
   respuesta.textContent=texto;
 
+  // 📱 Si JARVIS está funcionando como APK Android,
+  // usa la voz nativa del teléfono.
+  if(window.AndroidVoice &&
+     typeof window.AndroidVoice.hablar === "function"){
+
+    window.AndroidVoice.hablar(texto);
+    return;
+  }
+
+  // 🌐 Si JARVIS está abierto en Chrome u otro navegador,
+  // usa la voz del navegador.
   if(!("speechSynthesis" in window)){
     respuesta.textContent=texto+" (La voz no está disponible.)";
     return;
@@ -192,10 +203,10 @@ function hablar(texto){
 
   const voz=new SpeechSynthesisUtterance(texto);
 
-voz.lang="es-MX";
-const voces=speechSynthesis.getVoices();
-voz.rate=0.88;
-voz.pitch=0.72;
+  voz.lang="es-MX";
+  voz.rate=0.88;
+  voz.pitch=0.72;
+
   speechSynthesis.speak(voz);
 }
 
