@@ -30,6 +30,7 @@ jobs:
                   gradlePluginPortal()
               }
           }
+
           dependencyResolutionManagement {
               repositoriesMode.set(RepositoriesMode.FAIL_ON_PROJECT_REPOS)
               repositories {
@@ -37,6 +38,7 @@ jobs:
                   mavenCentral()
               }
           }
+
           rootProject.name = "JARVIS"
           include ':app'
           EOF
@@ -72,63 +74,145 @@ jobs:
           </resources>
           EOF
 
-          cat > android/app/src/main/AndroidManifest.xml <<'EOF'
-          <manifest xmlns:android="http://schemas.android.com/apk/res/android">
-              <uses-permission android:name="android.permission.INTERNET"/>
-              <uses-permission android:name="android.permission.RECORD_AUDIO"/>
-
-              <application
-                  android:theme="@style/AppTheme"
-                  android:label="@string/app_name"
-                  android:usesCleartextTraffic="false">
-                  <activity
-                      android:name=".MainActivity"
-                      android:exported="true">
-                      <intent-filter>
-                          <action android:name="android.intent.action.MAIN"/>
-                          <category android:name="android.intent.category.LAUNCHER"/>
-                      </intent-filter>
-                  </activity>
-              </application>
-          </manifest>
-          EOF
-
           cat > android/app/src/main/res/values/styles.xml <<'EOF'
           <resources>
               <style name="AppTheme" parent="android:style/Theme.Material.Light.NoActionBar">
                   <item name="android:fontFamily">sans</item>
                   <item name="android:colorAccent">#2196F3</item>
                   <item name="android:windowActionModeOverlay">true</item>
+                  <item name="android:windowNoTitle">true</item>
               </style>
           </resources>
+          EOF
+
+          cat > android/app/src/main/AndroidManifest.xml <<'EOF'
+          <manifest xmlns:android="http://schemas.android.com/apk/res/android">
+
+              <uses-permission android:name="android.permission.INTERNET"/>
+              <uses-permission android:name="android.permission.RECORD_AUDIO"/>
+
+              <application
+                  android:theme="@style/AppTheme"
+                  android:label="@string/app_name"
+                  android:usesCleartextTraffic="false"
+                  android:hardwareAccelerated="true">
+
+                  <activity
+                      android:name=".MainActivity"
+                      android:exported="true"
+                      android:screenOrientation="portrait">
+
+                      <intent-filter>
+                          <action android:name="android.intent.action.MAIN"/>
+                          <category android:name="android.intent.category.LAUNCHER"/>
+                      </intent-filter>
+
+                  </activity>
+
+              </application>
+
+          </manifest>
           EOF
 
           cat > android/app/src/main/java/com/jarvis/mark6/MainActivity.java <<'EOF'
           package com.jarvis.mark6;
 
+          import android.Manifest;
           import android.app.Activity;
+          import android.content.pm.PackageManager;
           import android.os.Bundle;
+          import android.webkit.PermissionRequest;
           import android.webkit.WebChromeClient;
           import android.webkit.WebSettings;
           import android.webkit.WebView;
           import android.webkit.WebViewClient;
 
           public class MainActivity extends Activity {
+
+              private WebView web;
+
+              private static final int MIC_PERMISSION_CODE = 100;
+
               @Override
-              public void onCreate(Bundle savedInstanceState) {
+              protected void onCreate(Bundle savedInstanceState) {
                   super.onCreate(savedInstanceState);
 
-                  WebView web = new WebView(this);
+                  web = new WebView(this);
+
                   WebSettings settings = web.getSettings();
+
                   settings.setJavaScriptEnabled(true);
                   settings.setDomStorageEnabled(true);
+                  settings.setDatabaseEnabled(true);
                   settings.setMediaPlaybackRequiresUserGesture(false);
+                  settings.setAllowFileAccess(true);
+                  settings.setAllowContentAccess(true);
 
                   web.setWebViewClient(new WebViewClient());
-                  web.setWebChromeClient(new WebChromeClient());
 
-                  web.loadUrl("https://carretodarwin372-dev.github.io/Jarvis/");
+                  web.setWebChromeClient(new WebChromeClient() {
+
+                      @Override
+                      public void onPermissionRequest(final PermissionRequest request) {
+
+                          runOnUiThread(() -> {
+
+                              if (checkSelfPermission(
+                                      Manifest.permission.RECORD_AUDIO
+                              ) != PackageManager.PERMISSION_GRANTED) {
+
+                                  requestPermissions(
+                                          new String[]{
+                                              Manifest.permission.RECORD_AUDIO
+                                          },
+                                          MIC_PERMISSION_CODE
+                                  );
+
+                                  return;
+                              }
+
+                              request.grant(request.getResources());
+                          });
+                      }
+                  });
+
                   setContentView(web);
+
+                  if (checkSelfPermission(
+                          Manifest.permission.RECORD_AUDIO
+                  ) != PackageManager.PERMISSION_GRANTED) {
+
+                      requestPermissions(
+                              new String[]{
+                                  Manifest.permission.RECORD_AUDIO
+                              },
+                              MIC_PERMISSION_CODE
+                      );
+                  }
+
+                  web.loadUrl(
+                      "https://carretodarwin372-dev.github.io/Jarvis/"
+                  );
+              }
+
+              @Override
+              public void onBackPressed() {
+
+                  if (web.canGoBack()) {
+                      web.goBack();
+                  } else {
+                      super.onBackPressed();
+                  }
+              }
+
+              @Override
+              protected void onDestroy() {
+
+                  if (web != null) {
+                      web.destroy();
+                  }
+
+                  super.onDestroy();
               }
           }
           EOF
@@ -141,7 +225,8 @@ jobs:
 
       - name: Construir APK
         working-directory: android
-        run: gradle assembleDebug --no-daemon
+        run: |
+          gradle assembleDebug --no-daemon
 
       - name: Guardar APK
         uses: actions/upload-artifact@v4
