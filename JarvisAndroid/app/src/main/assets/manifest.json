@@ -1,0 +1,20 @@
+{
+  "name": "JARVIS Mark 6",
+  "short_name": "JARVIS",
+  "id": "/Jarvis/",
+  "description": "JARVIS Mark 6, mi asistente personal para Android.",
+  "start_url": "/Jarvis/",
+  "scope": "/Jarvis/",
+  "display": "standalone",
+  "orientation": "any",
+  "background_color": "#000000",
+  "theme_color": "#00BFFF",
+  "icons": [
+    {
+      "src": "jarvis-logo.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ]
+}

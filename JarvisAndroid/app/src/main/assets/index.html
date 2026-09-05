@@ -1,0 +1,580 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="manifest" href="manifest.json">
+<title>JARVIS Mark 6</title>
+
+<style>
+body{
+  margin:0;
+  background:#071018;
+  color:#dff8ff;
+  font-family:Arial;
+  text-align:center;
+}
+
+.app{
+  max-width:500px;
+  margin:auto;
+  padding:25px 18px;
+}
+
+h1{
+  letter-spacing:5px;
+}
+
+.sub{
+  color:#75b8c9;
+  margin-bottom:25px;
+}
+
+.card{
+  background:#0c1b23;
+  border:1px solid #245465;
+  border-radius:18px;
+  padding:20px;
+  margin:15px 0;
+}
+
+.orb{
+  width:110px;
+  height:110px;
+  margin:10px auto 20px;
+  border:2px solid #42d7ff;
+  border-radius:50%;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  font-size:45px;
+}
+
+#respuesta{
+  min-height:55px;
+  font-size:18px;
+  line-height:1.4;
+}
+
+button{
+  width:100%;
+  padding:15px;
+  margin:7px 0;
+  border:0;
+  border-radius:12px;
+  background:#123b4a;
+  color:white;
+  font-size:16px;
+  font-weight:bold;
+}
+
+.principal{
+  background:#14758f;
+}
+
+.estado{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:10px;
+}
+
+.cuadro{
+  background:#102832;
+  padding:12px;
+  border-radius:10px;
+}
+
+.etiqueta{
+  font-size:11px;
+  color:#77aebb;
+}
+
+.valor{
+  font-weight:bold;
+  margin-top:5px;
+}
+</style>
+</head>
+
+<body>
+
+<div class="app">
+
+<h1>JARVIS</h1>
+<div class="sub">MARK 6 · ASISTENTE PERSONAL</div>
+
+<div class="card">
+
+<div class="orb">🤖</div>
+
+<div id="respuesta">
+A su servicio, señor.
+</div>
+
+<button class="principal" onclick="escuchar()">
+🎙️ HABLAR CON JARVIS
+</button>
+
+<button onclick="detener()">
+⏹️ DETENER VOZ
+</button>
+
+</div>
+
+<div class="card estado">
+
+<div class="cuadro">
+<div class="etiqueta">🧠 IA NÚCLEO</div>
+<div class="valor">ACTIVA</div>
+</div>
+
+<div class="cuadro">
+<div class="etiqueta">📶 RED</div>
+<div class="valor" id="red">--</div>
+</div>
+
+<div class="cuadro">
+<div class="etiqueta">🔋 ENERGÍA</div>
+<div class="valor" id="bateria">--</div>
+</div>
+
+<div class="cuadro">
+<div class="etiqueta">🎙️ VOZ</div>
+<div class="valor" id="vozEstado">LISTA</div>
+</div>
+
+</div>
+
+<div class="card">
+
+<button onclick="comando('hola')">
+👋 Hola JARVIS
+</button>
+
+<button onclick="comando('qué hora es')">
+🕐 ¿Qué hora es?
+</button>
+
+<button onclick="comando('qué día es hoy')">
+📅 ¿Qué día es hoy?
+</button>
+
+<button onclick="comando('quién eres')">
+🤖 ¿Quién eres?
+</button>
+
+<button onclick="comando('abre YouTube')">
+▶️ Abrir YouTube
+</button>
+
+<button onclick="comando('abre Google')">
+🔎 Abrir Google
+</button>
+
+</div>
+
+</div>
+
+<script>
+
+const respuesta=document.getElementById("res
+
+function hablar(texto){
+
+  respuesta.textContent=texto;
+
+  if(window.AndroidTTS){
+    window.AndroidTTS.speak(texto);
+    return;
+  }
+
+  if(!("speechSynthesis" in window)){
+    respuesta.textContent=texto+" (La voz no está disponible.)";
+    return;
+  }
+
+  speechSynthesis.cancel();
+
+  const voz=new SpeechSynthesisUtterance(texto);
+  voz.lang="es-MX";
+  voz.rate=0.88;
+  voz.pitch=0.72;
+
+  speechSynthesis.speak(voz);
+}
+  speechSynthesis.cancel();
+
+  const voz=new SpeechSynthesisUtterance(texto);
+
+voz.lang="es-MX";
+const voces=speechSynthesis.getVoices();
+voz.rate=0.88;
+voz.pitch=0.72;
+  speechSynthesis.speak(voz);
+}
+
+
+function comando(texto){
+
+  const pregunta=texto.toLowerCase();
+
+  if(pregunta.includes("youtube")){
+
+    hablar("Abriendo YouTube, señor.");
+
+    setTimeout(function(){
+      window.open("https://www.youtube.com","_blank");
+    },500);
+
+    return;
+  }
+
+
+  if(pregunta.includes("google")){
+
+    hablar("Abriendo Google, señor.");
+
+    setTimeout(function(){
+      window.open("https://www.google.com","_blank");
+    },500);
+
+    return;
+  }
+
+
+  if(pregunta.includes("hora")){
+
+    const hora=new Date().toLocaleTimeString(
+      "es-GT",
+      {
+        hour:"2-digit",
+        minute:"2-digit"
+      }
+    );
+
+    hablar("Son las "+hora);
+
+    return;
+  }
+
+
+  if(
+    pregunta.includes("día") ||
+    pregunta.includes("fecha")
+  ){
+
+    const fecha=new Date().toLocaleDateString(
+      "es-GT",
+      {
+        weekday:"long",
+        day:"numeric",
+        month:"long",
+        year:"numeric"
+      }
+    );
+
+    hablar("Hoy es "+fecha);
+
+    return;
+  }
+  // ===== COMANDOS ÚTILES JARVIS MARK 6 =====
+
+  // Buscar cualquier cosa en Google
+  if(
+    pregunta.includes("busca ") ||
+    pregunta.includes("buscar ")
+  ){
+
+    let busqueda = pregunta
+      .replace("busca ", "")
+      .replace("buscar ", "")
+      .trim();
+
+    if(busqueda){
+
+      hablar("Buscando " + busqueda + ", señor.");
+
+      setTimeout(function(){
+
+        window.open(
+          "https://www.google.com/search?q=" +
+          encodeURIComponent(busqueda),
+          "_blank"
+        );
+
+      },500);
+
+    }else{
+
+      hablar("¿Qué desea que busque, señor?");
+
+    }
+
+    return;
+  }
+
+
+  // Abrir Google Maps
+  if(
+    pregunta.includes("abre maps") ||
+    pregunta.includes("abre google maps") ||
+    pregunta.includes("mapas")
+  ){
+
+    hablar("Abriendo Google Maps, señor.");
+
+    setTimeout(function(){
+
+      window.open(
+        "https://maps.google.com",
+        "_blank"
+      );
+
+    },500);
+
+    return;
+  }
+
+
+  // Abrir WhatsApp
+  if(
+    pregunta.includes("abre whatsapp") ||
+    pregunta.includes("abrir whatsapp") ||
+    pregunta.includes("whatsapp")
+  ){
+
+    hablar("Abriendo WhatsApp, señor.");
+
+    setTimeout(function(){
+
+      window.open(
+"whatsapp://",        "_blank"
+      );
+
+    },500);
+
+    return;
+  }
+
+
+  // Abrir ChatGPT
+  if(
+    pregunta.includes("abre chatgpt") ||
+    pregunta.includes("abrir chatgpt")
+  ){
+
+    hablar("Abriendo ChatGPT, señor.");
+
+    setTimeout(function(){
+
+      window.open(
+        "https://chatgpt.com",
+        "_blank"
+      );
+
+    },500);
+
+    return;
+  }
+
+
+  // Abrir Facebook
+  if(
+    pregunta.includes("abre facebook") ||
+    pregunta.includes("abrir facebook")
+  ){
+
+    hablar("Abriendo Facebook, señor.");
+
+    setTimeout(function(){
+
+      window.open(
+        "https://www.facebook.com",
+        "_blank"
+      );
+
+    },500);
+
+    return;
+  }
+
+
+  // Estado de JARVIS
+  if(
+    pregunta.includes("estado del sistema") ||
+    pregunta.includes("estado de jarvis") ||
+    pregunta.includes("cómo está el sistema") ||
+    pregunta.includes("como esta el sistema")
+  ){
+
+    hablar(
+      "Todos los sistemas de JARVIS Mark 6 están funcionando correctamente, señor."
+    );
+
+    return;
+  }
+
+
+  // Presentación de JARVIS
+  if(
+    pregunta.includes("qué puedes hacer") ||
+    pregunta.includes("que puedes hacer")
+  ){
+
+    hablar(
+      "Puedo abrir aplicaciones y sitios web, buscar información, decirle la hora y la fecha, y ejecutar los comandos que estamos agregando a mi sistema, señor."
+    );
+
+    return;
+        }
+
+  if(
+    pregunta.includes("quién eres") ||
+    pregunta.includes("quien eres")
+  ){
+
+    hablar(
+      "Soy JARVIS Mark 6, su asistente personal. Estoy a su servicio, señor."
+    );
+
+    return;
+  }
+
+
+  if(pregunta.includes("hola")){
+
+    hablar(
+      "Hola, señor. ¿En qué puedo ayudarle?"
+    );
+
+    return;
+  }
+
+
+  hablar(
+    "Entendido. Todavía estoy aprendiendo ese comando."
+  );
+}
+
+
+const Reconocimiento=
+window.SpeechRecognition ||
+window.webkitSpeechRecognition;
+
+
+function escuchar(){
+
+  if(!Reconocimiento){
+
+    hablar(
+      "El reconocimiento de voz no está disponible. Abra JARVIS con Chrome."
+    );
+
+    return;
+  }
+
+
+  const reconocimiento=new Reconocimiento();
+
+  reconocimiento.lang="es-GT";
+  reconocimiento.interimResults=false;
+  reconocimiento.continuous=false;
+
+
+  reconocimiento.onstart=function(){
+
+    respuesta.textContent="Escuchando, señor...";
+
+    document.getElementById("vozEstado").textContent="ESCUCHANDO";
+  };
+
+
+  reconocimiento.onresult=function(event){
+
+    const texto=
+      event.results[0][0].transcript;
+
+    comando(texto);
+  };
+
+
+  reconocimiento.onerror=function(event){
+
+    document.getElementById("vozEstado").textContent="LISTA";
+
+    if(
+      event.error==="not-allowed" ||
+      event.error==="service-not-allowed"
+    ){
+
+      hablar(
+        "Necesito permiso para usar el micrófono."
+      );
+
+    }else{
+
+      hablar(
+        "No pude entenderlo. Inténtelo de nuevo, señor."
+      );
+    }
+  };
+
+
+  reconocimiento.onend=function(){
+
+    document.getElementById("vozEstado").textContent="LISTA";
+  };
+
+
+  try{
+
+    reconocimiento.start();
+
+  }catch(error){
+
+    document.getElementById("vozEstado").textContent="LISTA";
+
+    hablar(
+      "No pude iniciar el micrófono. Inténtelo de nuevo."
+    );
+  }
+}
+
+
+function detener(){
+
+  speechSynthesis.cancel();
+
+}
+
+
+document.getElementById("red").textContent=
+navigator.onLine ?
+"CONECTADA" :
+"SIN CONEXIÓN";
+
+
+if(navigator.getBattery){
+
+  navigator.getBattery().then(function(bateria){
+
+    function actualizar(){
+
+      document.getElementById("bateria").textContent=
+        Math.round(bateria.level*100)+"%";
+    }
+
+    actualizar();
+
+    bateria.addEventListener(
+      "levelchange",
+      actualizar
+    );
+
+  });
+}
+
+</script>
+
+</body>
+</html>
