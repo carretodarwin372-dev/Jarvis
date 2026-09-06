@@ -178,24 +178,24 @@ A su servicio, señor.
 <script>
 
 const respuesta=document.getElementById("respuesta");
-
 function hablar(texto){
 
   respuesta.textContent=texto;
 
-  // 📱 Si JARVIS está funcionando como APK Android,
-  // usa la voz nativa del teléfono.
+  // Si estamos dentro del APK, usar la voz nativa de Android
   if(window.AndroidVoice &&
-     typeof window.AndroidVoice.hablar === "function"){
+     typeof window.AndroidVoice.hablar==="function"){
 
     window.AndroidVoice.hablar(texto);
     return;
   }
 
-  // 🌐 Si JARVIS está abierto en Chrome u otro navegador,
-  // usa la voz del navegador.
+  // Si estamos en Chrome, usar la voz del navegador
   if(!("speechSynthesis" in window)){
-    respuesta.textContent=texto+" (La voz no está disponible.)";
+
+    respuesta.textContent=
+      texto+" (La voz no está disponible.)";
+
     return;
   }
 
@@ -208,7 +208,7 @@ function hablar(texto){
   voz.pitch=0.72;
 
   speechSynthesis.speak(voz);
-}
+  }
 
 
 function comando(texto){
