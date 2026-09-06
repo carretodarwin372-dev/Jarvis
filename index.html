@@ -454,12 +454,194 @@ function comando(texto){
 }
 
 
-const Reconocimiento=
+  const Reconocimiento=
 window.SpeechRecognition ||
 window.webkitSpeechRecognition;
 
+let jarvisActivo=false;
+let escuchandoOrden=false;
+let reconocimientoActual=null;
+
+function iniciarEscucha(){
+
+  if(!Reconocimiento){
+    hablar(
+      "El reconocimiento de voz no está disponible en este dispositivo, señor."
+    );
+    return;
+  }
+
+  if(reconocimientoActual){
+    try{
+      reconocimientoActual.abort();
+    }catch(e){}
+  }
+
+  reconocimientoActual=new Reconocimiento();
+
+  reconocimientoActual.lang="es-GT";
+  reconocimientoActual.interimResults=false;
+  reconocimientoActual.continuous=false;
+
+  reconocimientoActual.onstart=function(){
+
+    document.getElementById("vozEstado").textContent=
+      escuchandoOrden ? "ESCUCHANDO ORDEN" : "ESPERANDO SEÑOR";
+
+    respuesta.textContent=
+      escuchandoOrden
+      ? "Escuchando, señor..."
+      : "Esperando la palabra de activación...";
+  };
+
+  reconocimientoActual.onresult=function(event){
+
+    const texto=
+      event.results[0][0].transcript.trim();
+
+    const pregunta=texto.toLowerCase();
+
+    // ===== MODO ESPERA =====
+
+    if(!escuchandoOrden){
+
+      if(
+        pregunta==="señor" ||
+        pregunta.includes("señor")
+      ){
+
+        jarvisActivo=true;
+        escuchandoOrden=true;
+
+        hablar("Sí, señor. ¿Qué desea?");
+
+        setTimeout(function(){
+          iniciarEscucha();
+        },1800);
+
+      }else{
+
+        setTimeout(function(){
+          if(jarvisActivo){
+            iniciarEscucha();
+          }
+        },300);
+
+      }
+
+      return;
+    }
+
+    // ===== RECIBIR ORDEN =====
+
+    escuchandoOrden=false;
+
+    comando(texto);
+
+    // Volver a esperar la palabra "Señor"
+    setTimeout(function(){
+
+      if(jarvisActivo){
+        iniciarEscucha();
+      }
+
+    },2500);
+  };
+
+  reconocimientoActual.onerror=function(event){
+
+    document.getElementById("vozEstado").textContent="LISTA";
+
+    if(
+      event.error==="not-allowed" ||
+      event.error==="service-not-allowed"
+    ){
+
+      hablar(
+        "Necesito permiso para usar el micrófono, señor."
+      );
+
+      return;
+    }
+
+    // Algunos errores son temporales.
+    // Volvemos a escuchar automáticamente.
+    if(jarvisActivo){
+
+      setTimeout(function(){
+        iniciarEscucha();
+      },1000);
+    }
+  };
+
+  reconocimientoActual.onend=function(){
+
+    document.getElementById("vozEstado").textContent="LISTA";
+
+  };
+
+  try{
+
+    reconocimientoActual.start();
+
+  }catch(error){
+
+    document.getElementById("vozEstado").textContent="LISTA";
+
+    if(jarvisActivo){
+
+      setTimeout(function(){
+        iniciarEscucha();
+      },1000);
+
+    }
+  }
+}
+
 
 function escuchar(){
+
+  jarvisActivo=true;
+  escuchandoOrden=false;
+
+  hablar("Estoy atento, señor.");
+
+  setTimeout(function(){
+
+    iniciarEscucha();
+
+  },1800);
+}
+
+
+function detener(){
+
+  jarvisActivo=false;
+  escuchandoOrden=false;
+
+  if(reconocimientoActual){
+
+    try{
+      reconocimientoActual.abort();
+    }catch(e){}
+
+    reconocimientoActual=null;
+  }
+
+  if(window.AndroidVoice &&
+     typeof window.AndroidVoice.detener === "function"){
+
+    window.AndroidVoice.detener();
+
+  }else if("speechSynthesis" in window){
+
+    speechSynthesis.cancel();
+
+  }
+
+  document.getElementById("vozEstado").textContent="LISTA";
+  respuesta.textContent="JARVIS en espera.";
+}
 
   if(!Reconocimiento){
 
